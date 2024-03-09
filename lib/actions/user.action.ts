@@ -250,7 +250,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
         },
       },
     ]);
-    const [questionViews] = await Answer.aggregate([
+    const [questionViews] = await Question.aggregate([
       { $match: { author: user._id } },
 
       {
@@ -264,7 +264,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
       { type: "QUESTION_COUNT" as BadgeCriteriaType, count: totalQuestions },
       { type: "ANSWER_COUNT" as BadgeCriteriaType, count: totalAnswers },
       {
-      type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+        type: "QUESTION_UPVOTES" as BadgeCriteriaType,
         count: questionUpvotes?.totalUpvotes || 0,
       },
       {
@@ -276,8 +276,14 @@ export async function getUserInfo(params: GetUserByIdParams) {
         count: questionViews?.totalViews || 0,
       },
     ];
-    const badgeCounts=assignBadges({criteria})
-    return { user, totalAnswers, totalQuestions,badgeCounts,reputation:user.reputation };
+    const badgeCounts = assignBadges({ criteria });
+    return {
+      user,
+      totalAnswers,
+      totalQuestions,
+      badgeCounts,
+      reputation: user.reputation,
+    };
   } catch (error) {
     console.log(error);
     throw error;
@@ -350,13 +356,3 @@ export async function getHotQuestions() {
     throw error;
   }
 }
-
-// export async function getUserInfo(params: GetUserStatsParams) {
-//   try {
-//     connectToDatabase();
-
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// }
